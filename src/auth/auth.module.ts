@@ -5,8 +5,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 
 import { AuthService } from './auth.service';
-import { AuthController } from './auth.controller'; // ✅ FALTABA
-import { JwtStrategy } from './jwt.strategy'; // mejor ruta directa
+import { AuthController } from './auth.controller';
+import { JwtStrategy } from './jwt.strategy';
 import { User } from '../users/users.entity';
 
 @Module({
@@ -16,15 +16,24 @@ import { User } from '../users/users.entity';
     JwtModule.registerAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
-      useFactory: (config: ConfigService) => ({
-        secret: config.get<string>('JWT_SECRET'),
-        signOptions: {
-          expiresIn: config.get<string>('JWT_EXPIRES') || '1d',
-        },
-      }),
+      useFactory: (config: ConfigService) => {
+        const secret = config.get<string>('JWT_SECRET');
+        const expiresIn = config.get<string>('JWT_EXPIRES') ?? '1d';
+
+        if (!secret) {
+          throw new Error('JWT_SECRET is not defined');
+        }
+
+        return {
+          secret,
+          signOptions: {
+            expiresIn: expiresIn as any, // 👈 fix definitivo de tipado
+          },
+        };
+      },
     }),
   ],
-  controllers: [AuthController], // ✅ AQUÍ ES DONDE VA
+  controllers: [AuthController],
   providers: [AuthService, JwtStrategy],
   exports: [AuthService],
 })
