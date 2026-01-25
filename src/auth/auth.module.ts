@@ -5,24 +5,26 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 
 import { AuthService } from './auth.service';
-import { JwtStrategy } from '../auth/jwt.strategy';
+import { AuthController } from './auth.controller'; // ✅ FALTABA
+import { JwtStrategy } from './jwt.strategy'; // mejor ruta directa
 import { User } from '../users/users.entity';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([User]),
-    PassportModule,
+    PassportModule.register({ defaultStrategy: 'jwt' }),
     JwtModule.registerAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: (config: ConfigService) => ({
-        secret: config.get('JWT_SECRET'),
+        secret: config.get<string>('JWT_SECRET'),
         signOptions: {
-          expiresIn: config.get('JWT_EXPIRES'),
+          expiresIn: config.get<string>('JWT_EXPIRES') || '1d',
         },
       }),
     }),
   ],
+  controllers: [AuthController], // ✅ AQUÍ ES DONDE VA
   providers: [AuthService, JwtStrategy],
   exports: [AuthService],
 })

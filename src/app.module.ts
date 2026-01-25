@@ -4,16 +4,16 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { EventsModule } from './events/events.module';
 import { MeetingsModule } from './meetings/meetings.module';
 import { HousesModule } from './houses/houses.module';
-import { AuthController } from './auth/auth.controller';
 
 @Module({
   imports: [
-    // 1️⃣ Carga variables de entorno (.env)
+    // 1️⃣ Variables de entorno (global)
     ConfigModule.forRoot({
       isGlobal: true,
     }),
@@ -27,22 +27,17 @@ import { AuthController } from './auth/auth.controller';
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
       autoLoadEntities: true,
-      synchronize: true,
+      synchronize: true, // ⚠️ en prod real luego lo apagamos
     }),
 
+    // 3️⃣ Módulos de la app
     AuthModule,
-
     UsersModule,
-
     EventsModule,
-
     MeetingsModule,
-
     HousesModule,
-
-    AuthController,
   ],
-  controllers: [AppController, AuthController],
+  controllers: [AppController], // ✅ SOLO AppController
   providers: [AppService],
 })
 export class AppModule {}
