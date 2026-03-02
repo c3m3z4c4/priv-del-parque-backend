@@ -10,13 +10,6 @@ services:
     depends_on:
       - db
 
-  frontend:
-    build:
-      context: ./frontend
-      args:
-        VITE_API_URL: https://privdelparque-backend-oqissi-9aca91-31-97-41-99.traefik.me
-    restart: always
-
   db:
     image: postgres:16
     container_name: privadas_db
