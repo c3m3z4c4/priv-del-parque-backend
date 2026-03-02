@@ -12,7 +12,7 @@ services:
 
   frontend:
     build:
-      context: https://github.com/c3m3z4c4/priv-del-parque-frontend.git#main
+      context: ./frontend
       args:
         VITE_API_URL: https://privdelparque-backend-oqissi-9aca91-31-97-41-99.traefik.me
     restart: always
