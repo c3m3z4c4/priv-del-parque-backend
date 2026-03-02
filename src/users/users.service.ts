@@ -71,7 +71,7 @@ export class UsersService {
       phone: dto.phone,
       address: dto.address,
       role: dto.role ?? Role.VECINO,
-      houseId: dto.houseId || null,
+      houseId: dto.houseId || undefined,
     });
 
     const saved = await this.usersRepository.save(user);
