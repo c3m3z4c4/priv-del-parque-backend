@@ -7,6 +7,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
 import { JwtStrategy } from './jwt.strategy';
+import { RolesGuard } from './roles.guard';
 import { User } from '../users/users.entity';
 
 @Module({
@@ -19,22 +20,13 @@ import { User } from '../users/users.entity';
       useFactory: (config: ConfigService) => {
         const secret = config.get<string>('JWT_SECRET');
         const expiresIn = config.get<string>('JWT_EXPIRES') ?? '1d';
-
-        if (!secret) {
-          throw new Error('JWT_SECRET is not defined');
-        }
-
-        return {
-          secret,
-          signOptions: {
-            expiresIn: expiresIn as any, // 👈 fix definitivo de tipado
-          },
-        };
+        if (!secret) throw new Error('JWT_SECRET is not defined');
+        return { secret, signOptions: { expiresIn: expiresIn as any } };
       },
     }),
   ],
   controllers: [AuthController],
-  providers: [AuthService, JwtStrategy],
-  exports: [AuthService],
+  providers: [AuthService, JwtStrategy, RolesGuard],
+  exports: [AuthService, RolesGuard],
 })
 export class AuthModule {}

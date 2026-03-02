@@ -1,0 +1,53 @@
+import {
+  Controller,
+  Get,
+  Post,
+  Patch,
+  Delete,
+  Body,
+  Param,
+  UseGuards,
+} from '@nestjs/common';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { RolesGuard } from '../auth/roles.guard';
+import { Roles } from '../auth/roles.decorator';
+import { Role } from '../auth/roles.enum';
+import { HousesService } from './houses.service';
+import { CreateHouseDto } from './dto/create-house.dto';
+import { UpdateHouseDto } from './dto/update-house.dto';
+
+@UseGuards(JwtAuthGuard, RolesGuard)
+@Controller('houses')
+export class HousesController {
+  constructor(private readonly housesService: HousesService) {}
+
+  @Get()
+  @Roles(Role.SUPER_ADMIN, Role.ADMIN)
+  findAll() {
+    return this.housesService.findAll();
+  }
+
+  @Get(':id')
+  @Roles(Role.SUPER_ADMIN, Role.ADMIN)
+  findOne(@Param('id') id: string) {
+    return this.housesService.findOne(id);
+  }
+
+  @Post()
+  @Roles(Role.SUPER_ADMIN, Role.ADMIN)
+  create(@Body() dto: CreateHouseDto) {
+    return this.housesService.create(dto);
+  }
+
+  @Patch(':id')
+  @Roles(Role.SUPER_ADMIN, Role.ADMIN)
+  update(@Param('id') id: string, @Body() dto: UpdateHouseDto) {
+    return this.housesService.update(id, dto);
+  }
+
+  @Delete(':id')
+  @Roles(Role.SUPER_ADMIN, Role.ADMIN)
+  remove(@Param('id') id: string) {
+    return this.housesService.remove(id);
+  }
+}

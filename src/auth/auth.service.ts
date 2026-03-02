@@ -5,7 +5,6 @@ import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 
 import { User } from '../users/users.entity';
-import { Role } from './roles.enum';
 
 @Injectable()
 export class AuthService {
@@ -15,10 +14,10 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  // 🔐 LOGIN
   async login(email: string, password: string) {
     const user = await this.usersRepository.findOne({
       where: { email, isActive: true },
+      relations: ['house'],
     });
 
     if (!user) {
@@ -26,7 +25,6 @@ export class AuthService {
     }
 
     const passwordValid = await bcrypt.compare(password, user.password);
-
     if (!passwordValid) {
       throw new UnauthorizedException('Credenciales inválidas');
     }
@@ -41,28 +39,14 @@ export class AuthService {
       user: {
         id: user.id,
         name: user.name,
+        lastName: user.lastName,
         email: user.email,
+        phone: user.phone,
+        address: user.address,
         role: user.role,
+        houseId: user.houseId,
+        isActive: user.isActive,
       },
     };
-  }
-
-  // 👤 CREAR USUARIO (ADMIN o VECINO)
-  async createUser(
-    name: string,
-    email: string,
-    password: string,
-    role: Role = Role.VECINO,
-  ) {
-    const hashedPassword = await bcrypt.hash(password, 10);
-
-    const user = this.usersRepository.create({
-      name,
-      email,
-      password: hashedPassword,
-      role,
-    });
-
-    return this.usersRepository.save(user);
   }
 }

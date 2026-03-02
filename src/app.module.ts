@@ -13,12 +13,8 @@ import { HousesModule } from './houses/houses.module';
 
 @Module({
   imports: [
-    // 1️⃣ Variables de entorno (global)
-    ConfigModule.forRoot({
-      isGlobal: true,
-    }),
+    ConfigModule.forRoot({ isGlobal: true }),
 
-    // 2️⃣ Conexión a PostgreSQL
     TypeOrmModule.forRoot({
       type: 'postgres',
       host: process.env.DB_HOST,
@@ -27,17 +23,16 @@ import { HousesModule } from './houses/houses.module';
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
       autoLoadEntities: true,
-      synchronize: true, // ⚠️ en prod real luego lo apagamos
+      synchronize: true,
     }),
 
-    // 3️⃣ Módulos de la app
     AuthModule,
     UsersModule,
     EventsModule,
     MeetingsModule,
     HousesModule,
   ],
-  controllers: [AppController], // ✅ SOLO AppController
+  controllers: [AppController],
   providers: [AppService],
 })
 export class AppModule {}
