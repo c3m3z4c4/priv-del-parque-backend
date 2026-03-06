@@ -10,6 +10,7 @@ import { UsersModule } from './users/users.module';
 import { EventsModule } from './events/events.module';
 import { MeetingsModule } from './meetings/meetings.module';
 import { HousesModule } from './houses/houses.module';
+import { DuesModule } from './dues/dues.module';
 
 @Module({
   imports: [
@@ -31,6 +32,7 @@ import { HousesModule } from './houses/houses.module';
     EventsModule,
     MeetingsModule,
     HousesModule,
+    DuesModule,
   ],
   controllers: [AppController],
   providers: [AppService],

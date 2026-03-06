@@ -8,7 +8,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { User } from './users.entity';
-import { Role } from '../auth/roles.enum';
+import { Role, UNIQUE_ROLES } from '../auth/roles.enum';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 
@@ -18,6 +18,16 @@ export class UsersService {
     @InjectRepository(User)
     private usersRepository: Repository<User>,
   ) {}
+
+  private async ensureUniqueRole(role: Role, excludeUserId?: string) {
+    if (!UNIQUE_ROLES.includes(role)) return;
+    const existing = await this.usersRepository.findOne({ where: { role } });
+    if (existing && existing.id !== excludeUserId) {
+      throw new ConflictException(
+        `Ya existe un usuario con el rol ${role}`,
+      );
+    }
+  }
 
   private sanitize(user: User) {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -62,6 +72,10 @@ export class UsersService {
         `El correo "${dto.email}" ya está registrado`,
       );
 
+    if (dto.role) {
+      await this.ensureUniqueRole(dto.role);
+    }
+
     const hashed = await bcrypt.hash(dto.password, 10);
     const user = this.usersRepository.create({
       name: dto.name,
@@ -101,6 +115,10 @@ export class UsersService {
         throw new ConflictException(
           `El correo "${dto.email}" ya está registrado`,
         );
+    }
+
+    if (dto.role) {
+      await this.ensureUniqueRole(dto.role, id);
     }
 
     if (dto.password) {

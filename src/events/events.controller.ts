@@ -8,7 +8,7 @@ import { Role } from '../auth/roles.enum';
 @UseGuards(JwtAuthGuard, RolesGuard)
 export class EventsController {
   @Post()
-  @Roles(Role.ADMIN)
+  @Roles(Role.ADMIN, Role.PRESIDENTE, Role.SECRETARIO, Role.TESORERO)
   createEvent() {
     return 'Evento creado (solo admin)';
   }
