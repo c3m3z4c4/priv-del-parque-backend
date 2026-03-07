@@ -13,6 +13,7 @@ import { HousesModule } from './houses/houses.module';
 import { DuesModule } from './dues/dues.module';
 import { NotificationsModule } from './notifications/notifications.module';
 import { ProjectsModule } from './projects/projects.module';
+import { RsvpsModule } from './rsvps/rsvps.module';
 
 @Module({
   imports: [
@@ -37,6 +38,7 @@ import { ProjectsModule } from './projects/projects.module';
     DuesModule,
     NotificationsModule,
     ProjectsModule,
+    RsvpsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
