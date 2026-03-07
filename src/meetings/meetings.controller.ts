@@ -13,44 +13,44 @@ import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { RolesGuard } from '../auth/roles.guard';
 import { Roles } from '../auth/roles.decorator';
 import { Role } from '../auth/roles.enum';
-import { EventsService } from './events.service';
-import { CreateEventDto } from './dto/create-event.dto';
-import { UpdateEventDto } from './dto/update-event.dto';
+import { MeetingsService } from './meetings.service';
+import { CreateMeetingDto } from './dto/create-meeting.dto';
+import { UpdateMeetingDto } from './dto/update-meeting.dto';
 
-@Controller('events')
-export class EventsController {
-  constructor(private readonly eventsService: EventsService) {}
+@Controller('meetings')
+export class MeetingsController {
+  constructor(private readonly meetingsService: MeetingsService) {}
 
   @Get()
   @UseGuards(JwtAuthGuard)
   findAll() {
-    return this.eventsService.findAll();
+    return this.meetingsService.findAll();
   }
 
   @Get(':id')
   @UseGuards(JwtAuthGuard)
   findOne(@Param('id') id: string) {
-    return this.eventsService.findOne(id);
+    return this.meetingsService.findOne(id);
   }
 
   @Post()
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.SUPER_ADMIN, Role.ADMIN, Role.PRESIDENTE, Role.SECRETARIO, Role.TESORERO)
-  create(@Body() dto: CreateEventDto, @Request() req: any) {
-    return this.eventsService.create(dto, req.user?.id);
+  create(@Body() dto: CreateMeetingDto, @Request() req: any) {
+    return this.meetingsService.create(dto, req.user?.id);
   }
 
   @Patch(':id')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.SUPER_ADMIN, Role.ADMIN, Role.PRESIDENTE, Role.SECRETARIO, Role.TESORERO)
-  update(@Param('id') id: string, @Body() dto: UpdateEventDto) {
-    return this.eventsService.update(id, dto);
+  update(@Param('id') id: string, @Body() dto: UpdateMeetingDto) {
+    return this.meetingsService.update(id, dto);
   }
 
   @Delete(':id')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.SUPER_ADMIN, Role.ADMIN, Role.PRESIDENTE, Role.SECRETARIO, Role.TESORERO)
   remove(@Param('id') id: string) {
-    return this.eventsService.remove(id);
+    return this.meetingsService.remove(id);
   }
 }

@@ -1,0 +1,43 @@
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  ManyToOne,
+  JoinColumn,
+} from 'typeorm';
+import { User } from '../users/users.entity';
+
+@Entity('notifications')
+export class Notification {
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
+
+  @Column()
+  userId: string;
+
+  @ManyToOne(() => User, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'userId' })
+  user: User;
+
+  @Column({ type: 'enum', enum: ['new_event', 'new_meeting'] })
+  type: 'new_event' | 'new_meeting';
+
+  @Column()
+  title: string;
+
+  @Column()
+  message: string;
+
+  @Column()
+  targetId: string;
+
+  @Column({ type: 'enum', enum: ['event', 'meeting'] })
+  targetType: 'event' | 'meeting';
+
+  @Column({ default: false })
+  read: boolean;
+
+  @CreateDateColumn()
+  createdAt: Date;
+}

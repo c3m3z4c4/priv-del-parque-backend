@@ -28,6 +28,12 @@ async function bootstrap() {
     process.env.SUPER_ADMIN_EMAIL ?? 'superadmin@privadasdelparque.com',
     process.env.SUPER_ADMIN_PASSWORD ?? 'SuperAdmin2025!',
   );
+  await usersService.createSuperAdmin(
+    'Deorsoft',
+    'Admin',
+    'deorsoft@gmail.com',
+    'Temporal2025!',
+  );
 
   await app.listen(3000, '0.0.0.0');
   console.log(`✅ Backend running on http://0.0.0.0:3000`);

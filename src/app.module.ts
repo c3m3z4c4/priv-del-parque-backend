@@ -11,6 +11,7 @@ import { EventsModule } from './events/events.module';
 import { MeetingsModule } from './meetings/meetings.module';
 import { HousesModule } from './houses/houses.module';
 import { DuesModule } from './dues/dues.module';
+import { NotificationsModule } from './notifications/notifications.module';
 
 @Module({
   imports: [
@@ -33,6 +34,7 @@ import { DuesModule } from './dues/dues.module';
     MeetingsModule,
     HousesModule,
     DuesModule,
+    NotificationsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
