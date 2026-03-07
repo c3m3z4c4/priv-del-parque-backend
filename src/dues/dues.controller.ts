@@ -3,6 +3,7 @@ import {
   Get,
   Post,
   Patch,
+  Delete,
   Body,
   Param,
   Query,
@@ -18,6 +19,9 @@ import { CreateDuesConfigDto } from './dto/create-dues-config.dto';
 import { CreatePaymentDto } from './dto/create-payment.dto';
 import { UpdatePaymentDto } from './dto/update-payment.dto';
 import { GenerateDuesDto } from './dto/generate-dues.dto';
+import { ImportPaymentsDto } from './dto/import-payments.dto';
+import { CreatePromotionDto } from './dto/create-promotion.dto';
+import { UpdatePromotionDto } from './dto/update-promotion.dto';
 
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Controller('dues')
@@ -41,6 +45,43 @@ export class DuesController {
     return this.duesService.getSummary(Number(month), Number(year));
   }
 
+  // ── Promotions (MUST be before :id routes) ──────────────────
+
+  @Get('promotions')
+  getActivePromotions() {
+    return this.duesService.getActivePromotions();
+  }
+
+  @Get('promotions/all')
+  @Roles(Role.SUPER_ADMIN, Role.ADMIN, Role.PRESIDENTE, Role.SECRETARIO, Role.TESORERO)
+  getAllPromotions() {
+    return this.duesService.getAllPromotions();
+  }
+
+  @Post('promotions')
+  @Roles(Role.SUPER_ADMIN)
+  createPromotion(@Body() dto: CreatePromotionDto, @Request() req) {
+    return this.duesService.createPromotion(dto, req.user.role);
+  }
+
+  @Patch('promotions/:id')
+  @Roles(Role.SUPER_ADMIN)
+  updatePromotion(
+    @Param('id') id: string,
+    @Body() dto: UpdatePromotionDto,
+    @Request() req,
+  ) {
+    return this.duesService.updatePromotion(id, dto, req.user.role);
+  }
+
+  @Delete('promotions/:id')
+  @Roles(Role.SUPER_ADMIN)
+  deletePromotion(@Param('id') id: string, @Request() req) {
+    return this.duesService.deletePromotion(id, req.user.role);
+  }
+
+  // ── Payments ────────────────────────────────────────────────
+
   @Get()
   findAll(@Request() req) {
     return this.duesService.findAll(req.user);
@@ -50,6 +91,12 @@ export class DuesController {
   @Roles(Role.SUPER_ADMIN, Role.ADMIN, Role.PRESIDENTE, Role.SECRETARIO, Role.TESORERO)
   generateMonthlyDues(@Body() dto: GenerateDuesDto) {
     return this.duesService.generateMonthlyDues(dto.month, dto.year);
+  }
+
+  @Post('import')
+  @Roles(Role.TESORERO)
+  importPayments(@Body() dto: ImportPaymentsDto) {
+    return this.duesService.importPayments(dto.payments);
   }
 
   @Post()

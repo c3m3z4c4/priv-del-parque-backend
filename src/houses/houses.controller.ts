@@ -15,6 +15,7 @@ import { Role } from '../auth/roles.enum';
 import { HousesService } from './houses.service';
 import { CreateHouseDto } from './dto/create-house.dto';
 import { UpdateHouseDto } from './dto/update-house.dto';
+import { ImportHousesDto } from './dto/import-houses.dto';
 
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Controller('houses')
@@ -43,6 +44,12 @@ export class HousesController {
   @Roles(Role.SUPER_ADMIN, Role.ADMIN, Role.PRESIDENTE, Role.SECRETARIO, Role.TESORERO)
   update(@Param('id') id: string, @Body() dto: UpdateHouseDto) {
     return this.housesService.update(id, dto);
+  }
+
+  @Post('import')
+  @Roles(Role.SUPER_ADMIN, Role.ADMIN, Role.PRESIDENTE, Role.SECRETARIO, Role.TESORERO)
+  importHouses(@Body() dto: ImportHousesDto) {
+    return this.housesService.importHouses(dto.houses);
   }
 
   @Delete(':id')

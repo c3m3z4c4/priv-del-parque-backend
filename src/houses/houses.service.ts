@@ -70,4 +70,32 @@ export class HousesService {
     const house = await this.findOne(id);
     await this.housesRepository.remove(house);
   }
+
+  async importHouses(
+    houses: CreateHouseDto[],
+  ): Promise<{ created: number; skipped: number; skippedNumbers: string[] }> {
+    let created = 0;
+    let skipped = 0;
+    const skippedNumbers: string[] = [];
+
+    for (const dto of houses) {
+      const exists = await this.housesRepository.findOne({
+        where: { houseNumber: dto.houseNumber },
+      });
+      if (exists) {
+        skipped++;
+        skippedNumbers.push(dto.houseNumber);
+        continue;
+      }
+      const house = this.housesRepository.create({
+        houseNumber: dto.houseNumber,
+        address: dto.address,
+        status: dto.status ?? 'active',
+      });
+      await this.housesRepository.save(house);
+      created++;
+    }
+
+    return { created, skipped, skippedNumbers };
+  }
 }
